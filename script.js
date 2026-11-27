@@ -1,59 +1,62 @@
-// Get references to the HTML elements
-const chatForm = document.getElementById('chatForm');
-const userInput = document.getElementById('userInput');
-const responseContainer = document.getElementById('response');
+// L'Oréal Chatbot script.js - Connected to Cloudflare Worker
 
-// Initialize an array to keep track of the conversation history
-let messages = [
-  { role: 'system', content: `You are a friendly Budget Travel Planner, specializing in cost-conscious travel advice. You help users find cheap flights, budget-friendly accommodations, affordable itineraries, and low-cost activities in their chosen destination.
+document.addEventListener('DOMContentLoaded', () => {
+  const chatForm = document.getElementById('chat-form');
+  const userInput = document.getElementById('user-input');
+  const chatMessages = document.getElementById('chat-messages');
 
-  If a user's query is unrelated to budget travel, respond by stating that you do not know.`}
-];
+  // Your deployed Cloudflare Worker endpoint URL
+  const WORKER_URL = 'https://gentle-hill-2b63.floidsillano7.workers.dev/';
 
-// REPLACE with your actual Cloudflare Worker URL
-const workerUrl = 'openai-worker.your-subdomain.workers.dev';
-
-// Add event listener to the form
-chatForm.addEventListener('submit', async (event) => {
-  event.preventDefault(); // Prevent the form from submitting the traditional way
-  responseContainer.textContent = 'Thinking...'; // Display a loading message
-
-  // Add the user's message to the conversation history
-  messages.push({ role: 'user', content: userInput.value });
-
-  try {
-    // Send a POST request to your Cloudflare Worker
-    const response = await fetch(workerUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messages: messages,
-      }),
-    });
-
-    // Check if the response is not ok
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  // Initial system prompt to keep your chatbot focused on L'Oréal products and beauty advice
+  let messages = [
+    {
+      role: 'system',
+      content: 'You are a helpful and polite assistant for L’Oréal. You only answer questions related to L’Oréal products, makeup, skincare, haircare, fragrances, routines, and recommendations. Politely refuse any questions unrelated to L’Oréal or beauty topics.'
     }
+  ];
 
-    // Parse JSON response from the Cloudflare Worker
-    const result = await response.json();
+  chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const promptText = userInput.value.trim();
+    if (!promptText) return;
 
-    // Get the reply from OpenAI's response structure
-    const replyText = result.choices[0].message.content;
+    // Append user message to history and UI
+    messages.push({ role: 'user', content: promptText });
+    appendMessage('User', promptText);
+    userInput.value = '';
 
-    // Add the Worker's response to the conversation history
-    messages.push({ role: 'assistant', content: replyText });
+    try {
+      // Send request to your Cloudflare Worker proxy instead of OpenAI directly
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ messages: messages })
+      });
 
-    // Display the response on the page
-    responseContainer.textContent = replyText;
-  } catch (error) {
-    console.error('Error:', error); // Log the error
-    responseContainer.textContent = 'Sorry, something went wrong. Please try again later.'; // Show error message to the user
+      const data = await response.json();
+      
+      // Extract the assistant's reply from OpenAI's response structure returned by the worker
+      const botReply = data.choices && data.choices[0] && data.choices[0].message 
+        ? data.choices[0].message.content 
+        : 'Sorry, I am having trouble connecting right now.';
+
+      messages.push({ role: 'assistant', content: botReply });
+      appendMessage('L\'Oréal Assistant', botReply);
+
+    } catch (error) {
+      console.error('Error fetching response:', error);
+      appendMessage('System', 'Error: Unable to connect to the chatbot service.');
+    }
+  });
+
+  function appendMessage(sender, text) {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+    messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
-
-  // Clear the input field
-  userInput.value = '';
 });
