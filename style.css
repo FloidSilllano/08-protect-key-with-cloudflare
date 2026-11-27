@@ -3,74 +3,70 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif; /* Use Inter for body text */
+  font-family: 'Inter', sans-serif;
   margin: 0;
   padding-top: 40px;
   padding-bottom: 20px;
-  background: #e0f7fa; /* Light cyan background */
+  background: #111111;
+  color: #111111;
 }
 
 .container {
   max-width: 620px;
   margin: 0 auto;
   width: 95%;
-  background: white;
+  background: #ffffff;
+  border-top: 6px solid #c5a059;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  padding: 28px;
   text-align: center;
 }
 
 h1 {
-  font-family: 'Poppins', sans-serif; /* Use Poppins for headings */
-  color: #00796b; /* Teal color for headings */
-  margin: 0;
-  font-size: 38px;
+  font-family: 'Montserrat', sans-serif;
+  color: #000000;
+  letter-spacing: 4px;
+  margin: 0 0 6px 0;
+  font-size: 36px;
 }
 
 p {
-  color: #004d40; /* Dark teal for paragraph text */
+  color: #555555;
   margin-top: 0;
 }
 
 form {
   display: flex;
   gap: 10px;
-  margin-top: 34px;
+  margin-top: 28px;
 }
 
-input {
-  font-size: 18px;
+input[type="text"] {
   flex: 1;
-  padding: 12px;
-  border: 1px solid #ddd;
+  padding: 12px 14px;
+  border: 1px solid #cccccc;
   border-radius: 6px;
-  outline: none;
+  font-size: 15px;
 }
 
 button {
-  font-size: 18px;
-  padding: 12px 24px;
-  background: #00796b; /* Teal color for buttons */
-  color: white;
+  background: #000000;
+  color: #ffffff;
   border: none;
   border-radius: 6px;
+  padding: 12px 22px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
-  font-family: 'Poppins', sans-serif; /* Use Poppins for buttons */
 }
 
 button:hover {
-  background: #004d40; /* Darker teal on hover */
+  background: #c5a059;
+  color: #000000;
 }
 
 #response {
-  color: #222;
-  margin-top: 20px;
-  padding: 20px;
+  margin-top: 24px;
   text-align: left;
-  border-radius: 6px;
-  white-space: pre-wrap; /* Preserve line breaks and spacing */
-  background-color: #e6f9f8; /* Light teal background for response */
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1); /* Soft inner shadow */
+  line-height: 1.6;
 }
